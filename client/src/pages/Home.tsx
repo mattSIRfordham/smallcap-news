@@ -1,31 +1,177 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { getLoginUrl } from "@/const";
-import { Streamdown } from 'streamdown';
+import { trpc } from "@/lib/trpc";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Link } from "wouter";
+import { Clock, TrendingUp, Eye } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import NewsletterSignup from "@/components/NewsletterSignup";
+import PollWidget from "@/components/PollWidget";
+import SEO from "@/components/SEO";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
-export default function Home() {
-  // The userAuth hooks provides authentication state
-  // To implement login/logout functionality, simply call logout() or redirect to getLoginUrl()
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
-
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+function ArticleCard({ article }: { article: any }) {
+  const tags = article.tags ? JSON.parse(article.tags) : [];
+  const publishedDate = new Date(article.publishedAt).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+          <Clock className="w-4 h-4" />
+          <span>{publishedDate}</span>
+          <span className="mx-2">•</span>
+          <Eye className="w-4 h-4" />
+          <span>{article.viewCount} views</span>
+        </div>
+        <Link href={`/article/${article.slug}`}>
+          <a>
+            <CardTitle className="hover:text-primary transition-colors line-clamp-2">
+              {article.title}
+            </CardTitle>
+          </a>
+        </Link>
+        <CardDescription className="line-clamp-2">
+          {article.excerpt}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="secondary">{article.category.replace('_', ' ')}</Badge>
+          {tags.slice(0, 3).map((tag: string, idx: number) => (
+            <Badge key={idx} variant="outline">{tag}</Badge>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ArticleSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-4 w-32 mb-2" />
+        <Skeleton className="h-6 w-full mb-2" />
+        <Skeleton className="h-4 w-full" />
+      </CardHeader>
+      <CardContent>
+        <div className="flex gap-2">
+          <Skeleton className="h-6 w-20" />
+          <Skeleton className="h-6 w-20" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function Home() {
+  const { data: articles, isLoading } = trpc.articles.getRecent.useQuery({ limit: 20 });
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <SEO />
+      <Header />
+      
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-br from-primary/10 via-background to-background border-b">
+          <div className="container py-16">
+            <div className="max-w-3xl">
+              <div className="flex items-center gap-2 mb-4">
+                <TrendingUp className="w-8 h-8 text-primary" />
+                <Badge variant="secondary">Updated Hourly</Badge>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
+                News & Analysis for Small-Cap Companies
+              </h1>
+              <p className="text-lg text-muted-foreground text-balance">
+                Covering nanocap, microcap, and small-cap companies trading under $1 billion market cap 
+                on NASDAQ, NYSE, and OTC markets. AI-powered insights on the opportunities and challenges 
+                facing underserved companies.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Latest Articles */}
+        <section className="container py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold mb-2">Latest News</h2>
+            <p className="text-muted-foreground">
+              Fresh market analysis and company updates, generated hourly
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[...Array(6)].map((_, idx) => (
+                <ArticleSkeleton key={idx} />
+              ))}
+            </div>
+          ) : articles && articles.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {articles.map((article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-12 text-center">
+                <p className="text-muted-foreground">
+                  No articles available yet. Check back soon!
+                </p>
+              </CardContent>
+            </Card>
+          )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              <PollWidget />
+            </div>
+          </div>
+        </section>
+
+        {/* Newsletter Section */}
+        <section className="container py-12">
+          <div className="max-w-2xl mx-auto">
+            <NewsletterSignup />
+          </div>
+        </section>
+
+        {/* Featured Companies CTA */}
+        <section className="bg-muted/30 border-y">
+          <div className="container py-12">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-3xl font-bold mb-4">Explore Featured Companies</h2>
+              <p className="text-muted-foreground mb-6">
+                Discover in-depth profiles and Q&A sessions with our featured small-cap companies
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/featured-companies">
+                  <a className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6">
+                    View Featured Companies
+                  </a>
+                </Link>
+                <Link href="/company-qa">
+                  <a className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-6">
+                    Read Company Q&A
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }
