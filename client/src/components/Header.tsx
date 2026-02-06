@@ -14,8 +14,10 @@ export default function Header() {
 
   const navLinks = [
     { href: "/", label: "Latest News" },
+    { href: "/stock-screener", label: "Stock Screener" },
     { href: "/featured-companies", label: "Featured Companies" },
     { href: "/company-qa", label: "Company Q&A" },
+    { href: "/submit", label: "Submit Content" },
   ];
 
   return (

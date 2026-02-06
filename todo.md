@@ -56,3 +56,27 @@
 - [ ] Verify SEO implementation
 - [ ] Create deployment checkpoint
 - [ ] Document usage and admin procedures
+
+## New Features (In Progress)
+
+### Stock Screening Tool
+- [x] Add stock screening database fields (float, additional metrics)
+- [x] Create stock screener UI with filters (market cap, sector, float, exchange)
+- [x] Build backend API for stock screening queries)
+- [x] Add screener results page with sortable table
+- [x] Integrate screener into main navigation
+
+### User Content Submission
+- [x] Create user submissions database table
+- [x] Build submission form UI with rich text editor
+- [x] Implement backend submission handling and validation
+- [x] Create admin review interface for submissions (API ready, UI for future)
+- [x] Add submission status tracking (pending, approved, rejected)
+
+### Reusable Skill Creation
+- [x] Initialize finance-news-builder skill
+- [x] Document database schema patterns
+- [x] Create content generation templates
+- [x] Package UI components as references
+- [x] Write comprehensive SKILL.md
+- [x] Validate and deliver skill

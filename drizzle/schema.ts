@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, bigint, index } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, bigint, boolean, index } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -27,6 +27,10 @@ export const companies = mysqlTable("companies", {
   name: text("name").notNull(),
   exchange: mysqlEnum("exchange", ["NASDAQ", "NYSE", "OTC"]).notNull(),
   marketCap: bigint("marketCap", { mode: "number" }), // in USD
+  floatShares: bigint("floatShares", { mode: "number" }), // shares available for trading
+  sharesOutstanding: bigint("sharesOutstanding", { mode: "number" }),
+  currentPrice: varchar("currentPrice", { length: 20 }), // stored as string to avoid decimal precision issues
+  volume: bigint("volume", { mode: "number" }), // average daily volume
   sector: varchar("sector", { length: 100 }),
   industry: varchar("industry", { length: 100 }),
   description: text("description"),
@@ -202,3 +206,30 @@ export const contentGenerationLog = mysqlTable("content_generation_log", {
 
 export type ContentGenerationLog = typeof contentGenerationLog.$inferSelect;
 export type InsertContentGenerationLog = typeof contentGenerationLog.$inferInsert;
+
+/**
+ * User-submitted content for review and publication
+ */
+export const userSubmissions = mysqlTable("user_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  authorName: varchar("authorName", { length: 100 }).notNull(),
+  authorEmail: varchar("authorEmail", { length: 320 }).notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: mysqlEnum("category", ["market_analysis", "company_news", "regulatory", "opinion"]).notNull(),
+  companyTickers: text("companyTickers"), // JSON array of tickers
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  reviewedBy: int("reviewedBy"), // admin user ID
+  reviewNotes: text("reviewNotes"),
+  publishedArticleId: int("publishedArticleId"), // link to published article if approved
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+}, (table) => ({
+  statusIdx: index("status_idx").on(table.status),
+  submittedIdx: index("submitted_idx").on(table.submittedAt),
+  userIdx: index("user_idx").on(table.userId),
+}));
+
+export type UserSubmission = typeof userSubmissions.$inferSelect;
+export type InsertUserSubmission = typeof userSubmissions.$inferInsert;

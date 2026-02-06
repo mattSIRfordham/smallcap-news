@@ -4,6 +4,18 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import {
+  screenStocks,
+  getUniqueSectors,
+  getScreenerStats
+} from "./stockScreener";
+import {
+  createSubmission,
+  getSubmissionsByStatus,
+  getAllSubmissions,
+  getUserSubmissions,
+  updateSubmissionStatus
+} from "./userSubmissions";
+import {
   getRecentArticles,
   getArticleBySlug,
   getArticlesByCategory,
@@ -195,6 +207,97 @@ export const appRouter = router({
           input.pollId,
           ctx.user?.id,
           ctx.user ? undefined : ipAddress
+        );
+      }),
+  }),
+
+  screener: router({
+    search: publicProcedure
+      .input(z.object({
+        minMarketCap: z.number().optional(),
+        maxMarketCap: z.number().optional(),
+        minFloat: z.number().optional(),
+        maxFloat: z.number().optional(),
+        sectors: z.array(z.string()).optional(),
+        exchanges: z.array(z.enum(["NASDAQ", "NYSE", "OTC"])).optional(),
+        minPrice: z.number().optional(),
+        maxPrice: z.number().optional(),
+        minVolume: z.number().optional(),
+        sortBy: z.enum(["marketCap", "ticker", "price", "volume", "float"]).optional(),
+        sortOrder: z.enum(["asc", "desc"]).optional(),
+        limit: z.number().optional()
+      }))
+      .query(async ({ input }) => {
+        return await screenStocks(input);
+      }),
+
+    getSectors: publicProcedure.query(async () => {
+      return await getUniqueSectors();
+    }),
+
+    getStats: publicProcedure.query(async () => {
+      return await getScreenerStats();
+    }),
+  }),
+
+  submissions: router({
+    create: publicProcedure
+      .input(z.object({
+        authorName: z.string().min(1).max(100),
+        authorEmail: z.string().email().max(320),
+        title: z.string().min(5).max(500),
+        content: z.string().min(100),
+        category: z.enum(["market_analysis", "company_news", "regulatory", "opinion"]),
+        companyTickers: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const submission = {
+          ...input,
+          userId: ctx.user?.id,
+          companyTickers: input.companyTickers ? JSON.stringify(input.companyTickers) : null,
+        };
+        return await createSubmission(submission);
+      }),
+
+    getMySubmissions: protectedProcedure.query(async ({ ctx }) => {
+      return await getUserSubmissions(ctx.user.id);
+    }),
+
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+      return await getAllSubmissions();
+    }),
+
+    getByStatus: protectedProcedure
+      .input(z.object({
+        status: z.enum(["pending", "approved", "rejected"])
+      }))
+      .query(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        return await getSubmissionsByStatus(input.status);
+      }),
+
+    updateStatus: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["approved", "rejected"]),
+        reviewNotes: z.string().optional(),
+        publishedArticleId: z.number().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user.role !== "admin") {
+          throw new Error("Unauthorized");
+        }
+        return await updateSubmissionStatus(
+          input.id,
+          input.status,
+          ctx.user.id,
+          input.reviewNotes,
+          input.publishedArticleId
         );
       }),
   }),
