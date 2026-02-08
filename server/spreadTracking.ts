@@ -3,9 +3,10 @@
  */
 
 import { getDb } from "./db";
-import { spreadHistory, userSpreadAlerts, companies } from "../drizzle/schema";
+import { spreadHistory, userSpreadAlerts, companies, users } from "../drizzle/schema";
 import { fetchRealTimeQuote } from "./marketData";
 import { eq, and, gte, desc, sql } from "drizzle-orm";
+import { notifyOwner } from "./_core/notification";
 
 /**
  * Log current spread data for a ticker
@@ -156,7 +157,7 @@ export async function checkSpreadAlerts(ticker: string, currentSpreadPercent: nu
       )
       .execute();
 
-    // Update lastTriggeredAt for triggered alerts
+    // Update lastTriggeredAt and send notifications for triggered alerts
     const triggeredAlertIds = alerts.map(a => a.id);
     if (triggeredAlertIds.length > 0) {
       await db
@@ -164,6 +165,30 @@ export async function checkSpreadAlerts(ticker: string, currentSpreadPercent: nu
         .set({ lastTriggeredAt: new Date() })
         .where(sql`${userSpreadAlerts.id} IN (${triggeredAlertIds.join(',')})`)
         .execute();
+
+      // Send notifications for each triggered alert
+      for (const alert of alerts) {
+        try {
+          // Get user info for notification
+          const userResult = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, alert.userId))
+            .limit(1)
+            .execute();
+
+          const user = userResult[0];
+          if (user) {
+            await notifyOwner({
+              title: `Spread Alert: ${ticker}`,
+              content: `The bid-ask spread for ${ticker} has exceeded your threshold of ${alert.thresholdPercent}%. Current spread: ${currentSpreadPercent.toFixed(3)}%. User: ${user.name || user.email || user.openId}`
+            });
+            console.log(`[SpreadAlert] Notification sent for ${ticker} to user ${user.id}`);
+          }
+        } catch (error) {
+          console.error(`[SpreadAlert] Failed to send notification for alert ${alert.id}:`, error);
+        }
+      }
     }
 
     return alerts;

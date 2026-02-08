@@ -240,11 +240,11 @@ export type InsertUserSubmission = typeof userSubmissions.$inferInsert;
 export const spreadHistory = mysqlTable("spread_history", {
   id: int("id").autoincrement().primaryKey(),
   ticker: varchar("ticker", { length: 20 }).notNull(),
-  bid: varchar("bid", { length: 20 }).notNull(), // stored as string for precision
-  ask: varchar("ask", { length: 20 }).notNull(),
-  spread: varchar("spread", { length: 20 }).notNull(),
-  spreadPercent: varchar("spreadPercent", { length: 20 }).notNull(),
-  lastPrice: varchar("lastPrice", { length: 20 }).notNull(),
+  bid: varchar("bid", { length: 50 }).notNull(), // stored as string for precision
+  ask: varchar("ask", { length: 50 }).notNull(),
+  spread: varchar("spread", { length: 50 }).notNull(),
+  spreadPercent: varchar("spreadPercent", { length: 50 }).notNull(),
+  lastPrice: varchar("lastPrice", { length: 50 }).notNull(),
   volume: bigint("volume", { mode: "number" }),
   marketCap: bigint("marketCap", { mode: "number" }),
   recordedAt: timestamp("recordedAt").defaultNow().notNull(),

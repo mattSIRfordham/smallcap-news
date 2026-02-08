@@ -27,6 +27,7 @@ import {
   logSpreadData,
   checkSpreadAlerts
 } from "./spreadTracking";
+import { triggerSpreadTracking } from "./scheduler";
 import { getDb } from "./db";
 import { userSpreadAlerts } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -442,6 +443,16 @@ export const appRouter = router({
 
         return { success: true };
       }),
+  }),
+
+  scheduler: router({
+    triggerSpreadTracking: protectedProcedure.mutation(async ({ ctx }) => {
+      // Only allow admin users to manually trigger jobs
+      if (ctx.user.role !== "admin") {
+        throw new Error("Unauthorized: Admin access required");
+      }
+      return await triggerSpreadTracking();
+    }),
   }),
 });
 

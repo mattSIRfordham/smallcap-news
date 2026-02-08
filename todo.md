@@ -122,3 +122,23 @@
 - [x] Add notification delivery when alerts trigger (backend ready)
 - [x] Create alert history and status tracking
 - [ ] Add email/in-app notification preferences (future enhancement)
+
+## Spread Tracking Automation & Notifications (In Progress)
+
+### Cron Job Setup
+- [x] Create cron job scheduler for spread tracking
+- [x] Configure 15-30 minute interval for data collection (20 min)
+- [x] Add error handling and logging for background jobs
+- [x] Test automated spread data collection (working in production)
+
+### Database Population
+- [x] Research and compile list of real nanocap/microcap companies
+- [x] Create seed script to populate companies table
+- [x] Add company metadata (ticker, name, exchange, market cap, sector)
+- [x] Verify data quality and ticker validity (20 companies added)
+
+### Notification Delivery
+- [x] Integrate Manus notification API for alerts
+- [x] Implement notification sending when alerts trigger
+- [ ] Add notification preferences (in-app, email) (future enhancement)
+- [x] Test notification delivery flow (integrated and tested)
