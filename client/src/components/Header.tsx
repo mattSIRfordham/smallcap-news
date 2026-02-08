@@ -18,6 +18,7 @@ export default function Header() {
     { href: "/featured-companies", label: "Featured Companies" },
     { href: "/company-qa", label: "Company Q&A" },
     { href: "/submit", label: "Submit Content" },
+    { href: "/market-transparency", label: "Market Transparency" },
   ];
 
   return (

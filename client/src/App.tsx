@@ -12,6 +12,7 @@ import CompanyQA from "./pages/CompanyQA";
 import CompanyDetail from "./pages/CompanyDetail";
 import StockScreener from "./pages/StockScreener";
 import SubmitContent from "./pages/SubmitContent";
+import MarketTransparency from "./pages/MarketTransparency";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path={"/company/:ticker"} component={CompanyDetail} />
       <Route path={"/stock-screener"} component={StockScreener} />
       <Route path={"/submit"} component={SubmitContent} />
+      <Route path={"/market-transparency"} component={MarketTransparency} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>

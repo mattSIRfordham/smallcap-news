@@ -80,3 +80,21 @@
 - [x] Package UI components as references
 - [x] Write comprehensive SKILL.md
 - [x] Validate and deliver skill
+
+## Real-Time Bid-Ask Spread Dashboard (In Progress)
+
+### Backend Implementation
+- [x] Create market data service for fetching real-time quotes
+- [x] Implement bid-ask spread calculation logic
+- [ ] Add database table for tracking spread history (optional enhancement)
+- [x] Create tRPC endpoints for market data queries
+- [x] Set up polling/refresh mechanism for live updates
+
+### Frontend Dashboard
+- [x] Create MarketTransparency page component
+- [x] Build real-time quote display with bid/ask/spread
+- [x] Implement spread percentage calculation and visualization
+- [ ] Add historical spread charts using recharts (future enhancement)
+- [x] Create company selector for multi-ticker monitoring
+- [x] Add auto-refresh functionality for live updates
+- [x] Integrate dashboard into main navigation

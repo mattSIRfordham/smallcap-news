@@ -16,6 +16,12 @@ import {
   updateSubmissionStatus
 } from "./userSubmissions";
 import {
+  fetchRealTimeQuote,
+  fetchMultipleQuotes,
+  calculateSpreadStats,
+  getDefaultWatchlist
+} from "./marketData";
+import {
   getRecentArticles,
   getArticleBySlug,
   getArticlesByCategory,
@@ -300,6 +306,37 @@ export const appRouter = router({
           input.publishedArticleId
         );
       }),
+  }),
+
+  marketData: router({
+    getQuote: publicProcedure
+      .input(z.object({
+        ticker: z.string().min(1).max(10)
+      }))
+      .query(async ({ input }) => {
+        return await fetchRealTimeQuote(input.ticker);
+      }),
+
+    getMultipleQuotes: publicProcedure
+      .input(z.object({
+        tickers: z.array(z.string())
+      }))
+      .query(async ({ input }) => {
+        return await fetchMultipleQuotes(input.tickers);
+      }),
+
+    getSpreadStats: publicProcedure
+      .input(z.object({
+        tickers: z.array(z.string())
+      }))
+      .query(async ({ input }) => {
+        const quotes = await fetchMultipleQuotes(input.tickers);
+        return calculateSpreadStats(quotes);
+      }),
+
+    getDefaultWatchlist: publicProcedure.query(() => {
+      return getDefaultWatchlist();
+    }),
   }),
 });
 
