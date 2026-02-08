@@ -22,6 +22,15 @@ import {
   getDefaultWatchlist
 } from "./marketData";
 import {
+  getSpreadHistory,
+  getSpreadStatistics,
+  logSpreadData,
+  checkSpreadAlerts
+} from "./spreadTracking";
+import { getDb } from "./db";
+import { userSpreadAlerts } from "../drizzle/schema";
+import { eq, and } from "drizzle-orm";
+import {
   getRecentArticles,
   getArticleBySlug,
   getArticlesByCategory,
@@ -334,9 +343,105 @@ export const appRouter = router({
         return calculateSpreadStats(quotes);
       }),
 
-    getDefaultWatchlist: publicProcedure.query(() => {
-      return getDefaultWatchlist();
+    getDefaultWatchlist: publicProcedure.query(async () => {
+      return await getDefaultWatchlist();
     }),
+
+    getSpreadHistory: publicProcedure
+      .input(z.object({
+        ticker: z.string(),
+        days: z.number().min(1).max(365).default(30)
+      }))
+      .query(async ({ input }) => {
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - input.days);
+        return await getSpreadHistory(input.ticker, startDate);
+      }),
+
+    getSpreadStatistics: publicProcedure
+      .input(z.object({
+        ticker: z.string(),
+        days: z.number().min(1).max(365).default(30)
+      }))
+      .query(async ({ input }) => {
+        return await getSpreadStatistics(input.ticker, input.days);
+      }),
+  }),
+
+  spreadAlerts: router({
+    create: protectedProcedure
+      .input(z.object({
+        ticker: z.string().min(1).max(20),
+        thresholdPercent: z.number().min(0.01).max(100)
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db.insert(userSpreadAlerts).values({
+          userId: ctx.user.id,
+          ticker: input.ticker.toUpperCase(),
+          thresholdPercent: input.thresholdPercent.toString(),
+          isActive: true,
+        });
+
+        return { success: true };
+      }),
+
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+
+      const alerts = await db
+        .select()
+        .from(userSpreadAlerts)
+        .where(eq(userSpreadAlerts.userId, ctx.user.id))
+        .execute();
+
+      return alerts.map(a => ({
+        ...a,
+        thresholdPercent: parseFloat(a.thresholdPercent)
+      }));
+    }),
+
+    delete: protectedProcedure
+      .input(z.object({ alertId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db
+          .delete(userSpreadAlerts)
+          .where(
+            and(
+              eq(userSpreadAlerts.id, input.alertId),
+              eq(userSpreadAlerts.userId, ctx.user.id)
+            )
+          )
+          .execute();
+
+        return { success: true };
+      }),
+
+    toggle: protectedProcedure
+      .input(z.object({ alertId: z.number(), isActive: z.boolean() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+
+        await db
+          .update(userSpreadAlerts)
+          .set({ isActive: input.isActive })
+          .where(
+            and(
+              eq(userSpreadAlerts.id, input.alertId),
+              eq(userSpreadAlerts.userId, ctx.user.id)
+            )
+          )
+          .execute();
+
+        return { success: true };
+      }),
   }),
 });
 

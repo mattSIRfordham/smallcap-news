@@ -98,3 +98,27 @@
 - [x] Create company selector for multi-ticker monitoring
 - [x] Add auto-refresh functionality for live updates
 - [x] Integrate dashboard into main navigation
+
+## Market Transparency Dashboard Enhancements (In Progress)
+
+### Real Small-Cap Ticker Integration
+- [x] Query companies table for actual small-cap stocks
+- [x] Update default watchlist to use real nanocap/microcap tickers
+- [x] Add ticker validation against database
+- [ ] Display company metadata alongside quotes (future enhancement)
+
+### Historical Spread Tracking
+- [x] Create spread_history database table
+- [x] Implement background job to log spread data periodically
+- [x] Build historical spread query endpoints
+- [x] Create spread trend charts using recharts
+- [x] Add time range selector (1D, 7D, 30D, 90D)
+- [x] Show spread volatility metrics
+
+### Spread Alert System
+- [x] Create user_spread_alerts database table
+- [x] Build alert creation/management UI
+- [x] Implement alert threshold checking logic
+- [x] Add notification delivery when alerts trigger (backend ready)
+- [x] Create alert history and status tracking
+- [ ] Add email/in-app notification preferences (future enhancement)

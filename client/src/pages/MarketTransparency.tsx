@@ -7,12 +7,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BarChart3, TrendingUp, RefreshCw, AlertCircle } from "lucide-react";
+import { BarChart3, TrendingUp, RefreshCw, AlertCircle, History } from "lucide-react";
+import SpreadChart from "@/components/SpreadChart";
+import SpreadAlerts from "@/components/SpreadAlerts";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function MarketTransparency() {
+  const { isAuthenticated } = useAuth();
   const [tickers, setTickers] = useState<string[]>([]);
   const [newTicker, setNewTicker] = useState("");
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const [historyDays, setHistoryDays] = useState(7);
 
   // Get default watchlist on mount
   const { data: defaultWatchlist } = trpc.marketData.getDefaultWatchlist.useQuery();
@@ -33,6 +40,12 @@ export default function MarketTransparency() {
   const { data: stats } = trpc.marketData.getSpreadStats.useQuery(
     { tickers },
     { enabled: tickers.length > 0, refetchInterval: autoRefresh ? 30000 : false }
+  );
+
+  // Fetch historical data for selected ticker
+  const { data: historyData } = trpc.marketData.getSpreadHistory.useQuery(
+    { ticker: selectedTicker!, days: historyDays },
+    { enabled: !!selectedTicker }
   );
 
   const handleAddTicker = () => {
@@ -181,6 +194,54 @@ export default function MarketTransparency() {
           </section>
         )}
 
+        {/* Historical Charts & Alerts */}
+        {selectedTicker && (
+          <section className="container pb-8">
+            <Tabs defaultValue="history" className="w-full">
+              <TabsList>
+                <TabsTrigger value="history">
+                  <History className="w-4 h-4 mr-2" />
+                  Historical Data
+                </TabsTrigger>
+                {isAuthenticated && (
+                  <TabsTrigger value="alerts">
+                    <AlertCircle className="w-4 h-4 mr-2" />
+                    Alerts
+                  </TabsTrigger>
+                )}
+              </TabsList>
+              
+              <TabsContent value="history" className="mt-4">
+                <div className="mb-4 flex gap-2">
+                  {[1, 7, 30, 90].map(days => (
+                    <Button
+                      key={days}
+                      variant={historyDays === days ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setHistoryDays(days)}
+                    >
+                      {days}D
+                    </Button>
+                  ))}
+                </div>
+                {historyData && (
+                  <SpreadChart
+                    ticker={selectedTicker}
+                    data={historyData}
+                    days={historyDays}
+                  />
+                )}
+              </TabsContent>
+              
+              {isAuthenticated && (
+                <TabsContent value="alerts" className="mt-4">
+                  <SpreadAlerts />
+                </TabsContent>
+              )}
+            </Tabs>
+          </section>
+        )}
+
         {/* Real-Time Quotes */}
         <section className="container pb-12">
           {isLoading && (
@@ -206,14 +267,22 @@ export default function MarketTransparency() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {quotes.map((quote) => (
                 <Card key={quote.ticker} className="relative">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="absolute top-2 right-2"
-                    onClick={() => handleRemoveTicker(quote.ticker)}
-                  >
-                    ×
-                  </Button>
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedTicker(quote.ticker)}
+                    >
+                      <History className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveTicker(quote.ticker)}
+                    >
+                      ×
+                    </Button>
+                  </div>
                   
                   <CardHeader>
                     <div className="flex items-start justify-between">

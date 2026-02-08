@@ -233,3 +233,47 @@ export const userSubmissions = mysqlTable("user_submissions", {
 
 export type UserSubmission = typeof userSubmissions.$inferSelect;
 export type InsertUserSubmission = typeof userSubmissions.$inferInsert;
+
+/**
+ * Historical spread data for tracking bid-ask spreads over time
+ */
+export const spreadHistory = mysqlTable("spread_history", {
+  id: int("id").autoincrement().primaryKey(),
+  ticker: varchar("ticker", { length: 20 }).notNull(),
+  bid: varchar("bid", { length: 20 }).notNull(), // stored as string for precision
+  ask: varchar("ask", { length: 20 }).notNull(),
+  spread: varchar("spread", { length: 20 }).notNull(),
+  spreadPercent: varchar("spreadPercent", { length: 20 }).notNull(),
+  lastPrice: varchar("lastPrice", { length: 20 }).notNull(),
+  volume: bigint("volume", { mode: "number" }),
+  marketCap: bigint("marketCap", { mode: "number" }),
+  recordedAt: timestamp("recordedAt").defaultNow().notNull(),
+}, (table) => ({
+  tickerIdx: index("spread_ticker_idx").on(table.ticker),
+  recordedAtIdx: index("spread_recorded_at_idx").on(table.recordedAt),
+  tickerTimeIdx: index("spread_ticker_time_idx").on(table.ticker, table.recordedAt),
+}));
+
+export type SpreadHistory = typeof spreadHistory.$inferSelect;
+export type InsertSpreadHistory = typeof spreadHistory.$inferInsert;
+
+/**
+ * User spread alerts for monitoring specific tickers
+ */
+export const userSpreadAlerts = mysqlTable("user_spread_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  ticker: varchar("ticker", { length: 20 }).notNull(),
+  thresholdPercent: varchar("thresholdPercent", { length: 10 }).notNull(), // alert when spread exceeds this %
+  isActive: boolean("isActive").default(true).notNull(),
+  lastTriggeredAt: timestamp("lastTriggeredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("alert_user_idx").on(table.userId),
+  tickerIdx: index("alert_ticker_idx").on(table.ticker),
+  activeIdx: index("alert_active_idx").on(table.isActive),
+}));
+
+export type UserSpreadAlert = typeof userSpreadAlerts.$inferSelect;
+export type InsertUserSpreadAlert = typeof userSpreadAlerts.$inferInsert;

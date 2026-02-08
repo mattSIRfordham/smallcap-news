@@ -3,6 +3,10 @@
  * Uses Yahoo Finance API for live market data
  */
 
+import { getDb } from "./db";
+import { companies } from "../drizzle/schema";
+import { and, lte, isNotNull, sql } from "drizzle-orm";
+
 interface QuoteData {
   ticker: string;
   companyName: string;
@@ -98,13 +102,59 @@ export function calculateSpreadStats(quotes: QuoteData[]) {
 
 /**
  * Get default watchlist of small-cap tickers for dashboard
+ * Fetches actual small-cap companies from database
  */
-export function getDefaultWatchlist(): string[] {
-  return [
-    "AAPL", // Example tickers - replace with actual small-cap stocks
-    "MSFT",
-    "GOOGL",
-    "TSLA",
-    "NVDA",
-  ];
+export async function getDefaultWatchlist(): Promise<string[]> {
+  try {
+    const db = await getDb();
+    if (!db) {
+      // Fallback to some known small-cap tickers if DB unavailable
+      return ["SPRC", "BTCT", "ABVC", "MTEK", "VHAI"];
+    }
+
+    // Query companies with market cap under $1B, prioritize those with ticker symbols
+    const smallCapCompanies = await db
+      .select({ ticker: companies.ticker })
+      .from(companies)
+      .where(
+        and(
+          isNotNull(companies.ticker),
+          lte(companies.marketCap, 1000000000) // Under $1B
+        )
+      )
+      .limit(10)
+      .execute();
+
+    if (smallCapCompanies.length > 0) {
+      return smallCapCompanies.map(c => c.ticker!).filter(t => t.length > 0);
+    }
+
+    // If no companies in DB yet, return known small-cap tickers
+    return ["SPRC", "BTCT", "ABVC", "MTEK", "VHAI"];
+  } catch (error) {
+    console.error("Error fetching default watchlist:", error);
+    return ["SPRC", "BTCT", "ABVC", "MTEK", "VHAI"];
+  }
+}
+
+/**
+ * Get company info from database by ticker
+ */
+export async function getCompanyByTicker(ticker: string) {
+  try {
+    const db = await getDb();
+    if (!db) return null;
+
+    const result = await db
+      .select()
+      .from(companies)
+      .where(sql`${companies.ticker} = ${ticker.toUpperCase()}`)
+      .limit(1)
+      .execute();
+
+    return result.length > 0 ? result[0] : null;
+  } catch (error) {
+    console.error(`Error fetching company ${ticker}:`, error);
+    return null;
+  }
 }
