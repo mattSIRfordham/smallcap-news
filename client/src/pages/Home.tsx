@@ -19,7 +19,7 @@ function ArticleCard({ article }: { article: any }) {
   });
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className="premium-card group">
       <CardHeader>
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
           <Clock className="w-4 h-4" />
@@ -30,7 +30,7 @@ function ArticleCard({ article }: { article: any }) {
         </div>
         <Link href={`/article/${article.slug}`}>
           <a>
-            <CardTitle className="hover:text-primary transition-colors line-clamp-2">
+            <CardTitle className="hover:text-primary transition-colors line-clamp-2 text-xl group-hover:text-primary">
               {article.title}
             </CardTitle>
           </a>
@@ -79,17 +79,23 @@ export default function Home() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary/10 via-background to-background border-b">
-          <div className="container py-16">
-            <div className="max-w-3xl">
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-8 h-8 text-primary" />
-                <Badge variant="secondary">Updated Hourly</Badge>
+        <section className="relative overflow-hidden border-b">
+          {/* Elegant gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/10 to-background"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.05),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(255,215,0,0.03),transparent_50%)]"></div>
+          
+          <div className="container py-20 md:py-28 relative">
+            <div className="max-w-4xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 rounded-xl bg-primary/10 backdrop-blur-sm border border-primary/20">
+                  <TrendingUp className="w-7 h-7 text-primary" />
+                </div>
+                <Badge variant="secondary" className="px-4 py-1.5 text-sm font-medium bg-accent/80 border-gold-border">Updated Hourly</Badge>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
-                News & Analysis for Small-Cap Companies
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-balance leading-tight">
+                News & Analysis for <span className="gold-accent">Small-Cap</span> Companies
               </h1>
-              <p className="text-lg text-muted-foreground text-balance">
+              <p className="text-xl md:text-2xl text-muted-foreground text-balance leading-relaxed font-light">
                 Covering nanocap, microcap, and small-cap companies trading under $1 billion market cap 
                 on NASDAQ, NYSE, and OTC markets. AI-powered insights on the opportunities and challenges 
                 facing underserved companies.
@@ -102,9 +108,9 @@ export default function Home() {
         <section className="container py-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">Latest News</h2>
-            <p className="text-muted-foreground">
+          <div className="mb-10">
+            <h2 className="text-4xl font-bold mb-3">Latest News</h2>
+            <p className="text-lg text-muted-foreground">
               Fresh market analysis and company updates, generated hourly
             </p>
           </div>
