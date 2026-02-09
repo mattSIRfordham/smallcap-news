@@ -13,14 +13,14 @@ interface SEOProps {
 }
 
 export default function SEO({
-  title = "SmallCap Market News - News & Analysis for Small-Cap Companies",
+  title = "Undercap Stocks - News & Analysis for Small-Cap Companies",
   description = "AI-powered news and analysis for nanocap, microcap, and small-cap companies trading under $1 billion market cap on NASDAQ, NYSE, and OTC markets.",
   image = "/og-image.png",
   url,
   type = "website",
   publishedTime,
   modifiedTime,
-  author = "SmallCap News AI",
+  author = "Undercap Stocks AI",
   tags = []
 }: SEOProps) {
   useEffect(() => {
@@ -117,7 +117,7 @@ export function ArticleStructuredData({
     },
     "publisher": {
       "@type": "Organization",
-      "name": "SmallCap Market News",
+      "name": "Undercap Stocks",
       "logo": {
         "@type": "ImageObject",
         "url": `${window.location.origin}/logo.png`

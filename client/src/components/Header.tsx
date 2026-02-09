@@ -31,7 +31,7 @@ export default function Header() {
               <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/15 transition-colors">
                 <TrendingUp className="w-6 h-6 text-primary" />
               </div>
-              <span className="text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>SmallCap Market News</span>
+              <span className="text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>Undercap Stocks</span>
             </a>
           </Link>
 

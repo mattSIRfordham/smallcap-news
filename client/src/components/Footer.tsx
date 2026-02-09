@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-6 h-6 text-primary" />
-              <span className="font-bold text-lg">SmallCap Market News</span>
+              <span className="font-bold text-lg">Undercap Stocks</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-md">
               Your source for news and analysis on nanocap, microcap, and small-cap companies trading under $1 billion market cap. 
@@ -66,7 +66,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>© {currentYear} SmallCap Market News. All rights reserved.</p>
+          <p>© {currentYear} Undercap Stocks. All rights reserved.</p>
           <p className="mt-2">
             Content is AI-generated and for informational purposes only. Not financial advice.
           </p>

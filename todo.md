@@ -156,3 +156,19 @@
 - [x] Polish card designs with premium styling (hover effects)
 - [x] Enhance button and interactive element designs
 - [x] Improve overall spacing and visual hierarchy
+
+
+## Rebranding to Undercap Stocks (In Progress)
+
+### Site Name Updates
+- [x] Update site title in Header component
+- [x] Update SEO metadata and page titles
+- [x] Update Footer branding
+- [ ] Update VITE_APP_TITLE environment variable (managed by Manus UI)
+- [x] Update package.json project name
+- [x] Update all references in documentation
+
+### Domain Preparation
+- [x] Document new domains (undercapstocks.com, .io, .ai)
+- [x] Update SEO canonical URLs for new primary domain (ready for primary domain)
+- [x] Prepare domain binding instructions (see DOMAINS.md)
