@@ -172,3 +172,13 @@
 - [x] Document new domains (undercapstocks.com, .io, .ai)
 - [x] Update SEO canonical URLs for new primary domain (ready for primary domain)
 - [x] Prepare domain binding instructions (see DOMAINS.md)
+
+
+## Logo Design (In Progress)
+
+- [x] Generate professional logo with AI
+- [x] Upload logo to S3 storage (using CDN URL)
+- [x] Update Header component with new logo
+- [x] Add logo to Footer component
+- [ ] Update favicon with logo (optional future enhancement)
+- [x] Test logo display across all pages
