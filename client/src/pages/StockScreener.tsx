@@ -388,10 +388,8 @@ export default function StockScreener() {
                           {results.map(company => (
                             <tr key={company.id} className="border-b hover:bg-muted/50 transition-colors">
                               <td className="p-3">
-                                <Link href={`/company/${company.ticker}`}>
-                                  <a className="font-semibold text-primary hover:underline">
+                                <Link href={`/company/${company.ticker}`} className="font-semibold text-primary hover:underline">
                                     {company.ticker}
-                                  </a>
                                 </Link>
                               </td>
                               <td className="p-3">

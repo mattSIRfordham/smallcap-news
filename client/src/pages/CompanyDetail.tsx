@@ -42,8 +42,8 @@ export default function CompanyDetail() {
               <p className="text-muted-foreground mb-6">
                 The company you're looking for doesn't exist in our database.
               </p>
-              <Link href="/featured-companies">
-                <a className="text-primary hover:underline">← View Featured Companies</a>
+              <Link href="/featured-companies" className="text-primary hover:underline">
+                ← View Featured Companies
               </Link>
             </CardContent>
           </Card>
@@ -162,12 +162,10 @@ export default function CompanyDetail() {
                         <Clock className="w-4 h-4" />
                         <span>{publishedDate}</span>
                       </div>
-                      <Link href={`/article/${article.slug}`}>
-                        <a>
+                      <Link href={`/article/${article.slug}`} className="block">
                           <CardTitle className="hover:text-primary transition-colors line-clamp-2">
                             {article.title}
                           </CardTitle>
-                        </a>
                       </Link>
                       <CardDescription className="line-clamp-2">
                         {article.excerpt}

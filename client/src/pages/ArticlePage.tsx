@@ -47,8 +47,8 @@ export default function ArticlePage() {
               <p className="text-muted-foreground mb-6">
                 The article you're looking for doesn't exist or has been removed.
               </p>
-              <Link href="/">
-                <a className="text-primary hover:underline">← Back to Home</a>
+              <Link href="/" className="text-primary hover:underline">
+                ← Back to Home
               </Link>
             </CardContent>
           </Card>
@@ -140,12 +140,10 @@ export default function ArticlePage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {companies.map((company) => (
-                    <Link key={company.id} href={`/company/${company.ticker}`}>
-                      <a>
+                    <Link key={company.id} href={`/company/${company.ticker}`} className="inline-flex">
                         <Badge variant="outline" className="hover:bg-accent transition-colors">
                           {company.ticker} - {company.name}
                         </Badge>
-                      </a>
                     </Link>
                   ))}
                 </div>

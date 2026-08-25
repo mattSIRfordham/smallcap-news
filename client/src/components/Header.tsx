@@ -26,24 +26,20 @@ export default function Header() {
       <div className="container">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/">
-            <a className="flex items-center hover:opacity-90 transition-all duration-200">
+          <Link href="/" className="flex items-center hover:opacity-90 transition-all duration-200" aria-label="Undercap Stocks home">
               <img 
                 src="https://private-us-east-1.manuscdn.com/sessionFile/b3rctggf62jHrMsjiUmoDx/sandbox/g4J6HibEPq9p9UacJ5smzc_1770742352417_na1fn_dW5kZXJjYXAtc3RvY2tzLWxvZ28.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYjNyY3RnZ2Y2MmpIck1zamlVbW9EeC9zYW5kYm94L2c0SjZIaWJFUHE5cDlVYWNKNXNtemNfMTc3MDc0MjM1MjQxN19uYTFmbl9kVzVrWlhKallYQXRjM1J2WTJ0ekxXeHZaMjgucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=H6gB8aCquA4fgg6YXgF4sFHUbrmLC8jbvRLod2K15OQT8cn5MzIw39vXCLm3lz4BLDV0CRUWRPaglTccTsJOqYjT3TLg3aA-ihsN3WC7UYK9gcVsO67E3GfpMgtqqxS~vp4FagFDvb~CoES3hHFxjnv93GxY5UAnk~lYjWiZVz~I8n95yialyB0HMVia~h0sM0DQggj1fXsF2LPWdspkdmYcfmp87GpMOfjQNfBdjCzONSuASXTLgJaSGZPAaXa01QGYxnwdbmyqpCihZ6AHgyZe6RJ6ZildH-kCIqo-6nRGmZdwN~Ckvni9LJ0r3GfqW9c2dXkBfYVmKWduQAeg0Q__"
                 alt="Undercap Stocks Logo" 
                 className="h-10 w-auto"
               />
-            </a>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a className="text-sm font-medium text-foreground/80 hover:text-primary transition-all duration-200 relative group">
+              <Link key={link.href} href={link.href} className="text-sm font-medium text-foreground/80 hover:text-primary transition-all duration-200 relative group">
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
-                </a>
               </Link>
             ))}
           </nav>
@@ -76,10 +72,8 @@ export default function Header() {
             <SheetContent side="right">
               <div className="flex flex-col gap-4 mt-8">
                 {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href}>
-                    <a className="text-lg font-medium hover:text-primary transition-colors">
+                  <Link key={link.href} href={link.href} className="text-lg font-medium hover:text-primary transition-colors">
                       {link.label}
-                    </a>
                   </Link>
                 ))}
                 <div className="border-t pt-4 mt-4">

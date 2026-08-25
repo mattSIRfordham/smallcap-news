@@ -182,3 +182,9 @@
 - [x] Add logo to Footer component
 - [ ] Update favicon with logo (optional future enhancement)
 - [x] Test logo display across all pages
+
+## Markup Fixes (In Progress)
+
+- [x] Fix nested anchor markup reported on the homepage
+- [x] Add a regression test for header navigation markup
+- [x] Verify the homepage renders without DOM nesting errors

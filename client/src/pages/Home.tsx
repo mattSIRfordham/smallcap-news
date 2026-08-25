@@ -28,12 +28,10 @@ function ArticleCard({ article }: { article: any }) {
           <Eye className="w-4 h-4" />
           <span>{article.viewCount} views</span>
         </div>
-        <Link href={`/article/${article.slug}`}>
-          <a>
+        <Link href={`/article/${article.slug}`} className="block">
             <CardTitle className="hover:text-primary transition-colors line-clamp-2 text-xl group-hover:text-primary">
               {article.title}
             </CardTitle>
-          </a>
         </Link>
         <CardDescription className="line-clamp-2">
           {article.excerpt}
@@ -161,15 +159,11 @@ export default function Home() {
                 Discover in-depth profiles and Q&A sessions with our featured small-cap companies
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/featured-companies">
-                  <a className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6">
+                <Link href="/featured-companies" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6">
                     View Featured Companies
-                  </a>
                 </Link>
-                <Link href="/company-qa">
-                  <a className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-6">
+                <Link href="/company-qa" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-6">
                     Read Company Q&A
-                  </a>
                 </Link>
               </div>
             </div>
