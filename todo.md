@@ -188,3 +188,9 @@
 - [x] Fix nested anchor markup reported on the homepage
 - [x] Add a regression test for header navigation markup
 - [x] Verify the homepage renders without DOM nesting errors
+
+## Header Logo Verification (In Progress)
+
+- [x] Review the requested header logo resize for layout impact
+- [x] Refine logo dimensions to preserve header usability
+- [x] Verify the updated header on desktop and mobile
